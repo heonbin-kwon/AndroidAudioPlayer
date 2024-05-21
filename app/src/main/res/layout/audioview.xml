@@ -37,13 +37,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/singerName"
                 android:text="가수 이름"/>
-            <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/pg1"
-                android:max="100"
-                android:progress="0"
-                android:visibility="gone"/>
             <TextView
                 android:id="@+id/musicTime"
                 android:layout_width="wrap_content"

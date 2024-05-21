@@ -2,6 +2,7 @@ package com.example.androidaudioplayer;
 
 import com.example.androidaudioplayer.R;
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;;
@@ -16,6 +17,8 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     String selectMp3;
     MediaPlayer mPlayer;
     boolean[] Playing;
-    SeekBar currentSB = null;
+    //SeekBar currentSB = null;
     Thread MThread = null;
 
     SimpleDateFormat timeFormat = new SimpleDateFormat("mm:ss");
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
         setTitle("DCU Music Player");
         // 저장소 접근 허가 요청
         checkPermission();
@@ -81,13 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 View view = super.getView(position, convertView, parent);
                 ImageView iv = view.findViewById(R.id.music1);
                 TextView tx = view.findViewById(R.id.musicTime);
-                if (currentPlay == position) {
-                    iv.setImageResource(R.drawable.v);
-                    view.setBackgroundColor(Color.parseColor("#991D1B20"));
-                } else {
-                    iv.setImageResource(R.drawable.a);
-                    view.setBackgroundColor(Color.parseColor("#1D1B20"));
-                }
+                iv.setImageResource(R.drawable.a);
                 return view;
             }
         };
@@ -100,68 +98,66 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (mPlayer != null){
-                    mPlayer.stop();
-                    mPlayer.release();
-                    mPlayer = null;
-                    if(currentPlay != position){
-                        Playing[currentPlay] = false;
-                        if(currentSB != null){
-                            currentSB.setVisibility(View.GONE);
-
-                        }
-                        if(MThread != null){
-                            MThread.interrupt();
-                            MThread = null;
-                        }
-                    }
-                }
+//                if (mPlayer != null){
+//                    mPlayer.stop();
+//                    mPlayer.release();
+//                    mPlayer = null;
+//                    if(currentPlay != position){
+//                        Playing[currentPlay] = false;
+//                        if(MThread != null){
+//                            MThread.interrupt();
+//                            MThread = null;
+//                        }
+//                    }
+//                }
+//                selectMp3 = mp3List.get(position);
+//                try {
+//                    mPlayer = new MediaPlayer();
+//                    mPlayer.setDataSource(mp3Path + selectMp3);
+//                    mPlayer.prepareAsync();
+//                    mPlayer.setOnPreparedListener(mp -> {
+//                        mp.start();
+//                        TextView mTime = view.findViewById(R.id.musicTime);
+//                        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//                            @Override
+//                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                                if(fromUser){
+//                                    mPlayer.seekTo(progress);
+//                                }
+//                            }
+//                            @Override
+//                            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//                            }
+//                            @Override
+//                            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//                            }
+//                        });
+//                        MThread = new Thread(() -> {
+//                            while (mPlayer !=null && mPlayer.isPlaying()){
+//                                try{
+//                                    Thread.sleep(1000);
+//                                    runOnUiThread(()->{
+//                                        int currentP = mPlayer.getCurrentPosition();
+//                                        currentSB.setProgress(currentP);
+//                                        mTime.setText(timeFormat.format(mPlayer.getCurrentPosition()));
+//                                    });
+//                                }catch(Exception e){}
+//                            }
+//                        });
+//                        MThread.start();
+//                    });
+//                    currentPlay = position;
+//                    adapter.notifyDataSetChanged();
+//                } catch (IOException e) {
+//                }
+                Intent intent = new Intent(getApplicationContext(),SecondActivity.class);
                 selectMp3 = mp3List.get(position);
-                try {
-                    mPlayer = new MediaPlayer();
-                    mPlayer.setDataSource(mp3Path + selectMp3);
-                    mPlayer.prepareAsync();
-                    mPlayer.setOnPreparedListener(mp -> {
-                        mp.start();
-                        SeekBar seekBar = view.findViewById(R.id.pg1);
-                        TextView mTime = view.findViewById(R.id.musicTime);
-                        seekBar.setVisibility(View.VISIBLE);
-                        seekBar.setMax(mp.getDuration());
-                        currentSB = seekBar;
-                        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                            @Override
-                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                if(fromUser){
-                                    mPlayer.seekTo(progress);
-                                }
-                            }
-                            @Override
-                            public void onStartTrackingTouch(SeekBar seekBar) {
-
-                            }
-                            @Override
-                            public void onStopTrackingTouch(SeekBar seekBar) {
-
-                            }
-                        });
-                        MThread = new Thread(() -> {
-                            while (mPlayer !=null && mPlayer.isPlaying()){
-                                try{
-                                    Thread.sleep(1000);
-                                    runOnUiThread(()->{
-                                        int currentP = mPlayer.getCurrentPosition();
-                                        currentSB.setProgress(currentP);
-                                        mTime.setText(timeFormat.format(mPlayer.getCurrentPosition()));
-                                    });
-                                }catch(Exception e){}
-                            }
-                        });
-                        MThread.start();
-                    });
-                    currentPlay = position;
-                    adapter.notifyDataSetChanged();
-                } catch (IOException e) {
-                }
+                intent.putExtra("selectMp3", selectMp3);
+                intent.putExtra("Path",mp3Path);
+                startActivity(intent);
+                // 넘겨주기
             }
         });
         selectMp3 = mp3List.get(0);
